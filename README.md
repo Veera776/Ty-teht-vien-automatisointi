@@ -1,9 +1,9 @@
-
+ 
 Tämän README tiedoston tarkoitus on antaa tietoa automatisoidusta tehtävästä Windows defender offline skannaus.
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-Powershell skriptin tarkoitus on ajastaa Microsoft defender tekemään offline skannaus kerran kuukaudessa. 
+Powershell skriptin tarkoitus on ajastaa Microsoft defender tekemään offline skannaus neljän viikon välein maanantaisin klo 0.00 . 
 
 Offline tilassa on mahdollista havaita sellaiset haittaohjelmat, jotka olisi vaikeaa havaita tavallisella skannauksella. 
 
@@ -12,7 +12,7 @@ Tietokone käynnistyy uudelleen, ja se käynnistyy Windowsin palautusympäristö
 Skannaus kestää noin 15 minuuttia tai enemmän(riippuen tilanteesta) jonka jälkeen tietokone käynnistyy automaattisesti uudelleen, ja pääsee kirjautumaan tavalliselle Windows ympäristölle.
 
 Tarkastustulokset näkee kun menee defenderiin, siellä kohtaan "Virusten ja uhkien torjunta" sitten painaa tekstistä jossa lukee "Suojaushistoria".
-
+(Näyttää ainoastaan tuloksia jos jotain on löytynyt.)
 
 
 HUOMIOITAVAA
