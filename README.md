@@ -3,46 +3,56 @@ Tauko ja lukitusscripti 1.0
 
 TOIMINTAPERIAATE:
 
-Skripti ajaa itseään neljän tunnin sykleissä aina arkipäivisin, kun käyttäjä on kirjautunut. Skriptin tarkoitus on edistää taukojen pitämistä jotta silmät ja keho ei rasitu liikaa istumisesta näytön äärellä, ja se myöskin lukitsee käyttäjän koneen viiden minuutin jälkeen, jos toimintoa ei peruta.
-
-Päätoiminnot:
-
+-Skripti ajaa itseään neljän tunnin sykleissä aina arkipäivisin, kun käyttäjä on kirjautuneena. Skriptin tarkoitus on edistää taukojen pitämistä työpäivän aikana näyttämällä muistutuksia säännöllisin väliajoin, ja lukitsemalla tietokone tietyn ajan kuluttua.
 -Näyttää käyttäjälle ponnahdusikkunan, joka muistuttaa tauon pitämisestä. Ponnahdusikkunassa on painikkeet "OK" ja "Cancel". Ponnahdusikkuna häviää kymmenen sekunnin jälkeen, jos käyttäjä ei reagoi siihen.
--Käyttäjälle annetaan ennakkovaroitus, viisi minuuttia ennen kuin kone menee lukkoon, sen jälkeen kun ponnahdusikkunaan ollaan reagoitu.
--Tietkone menee automaattisesti lukkoon 5 minuutin jälkeen.
+-Kun painaa "OK" skriptin ajoa jatketaan, jos painaa "Cancel" skriptin toiminta keskeytetään, ja skripti ajaa itsensä seuraavan kerran 4 tunnin päästä.
+-Käyttäjällä on 10 minuuttia aikaa tallentaa keskeneräiset työt, ennen kuin ajastus menee loppuun ja uloskirjastuminen tapahtyuu.
 
-Miten scripti otetaan käyttöön?
+MITEN SKRIPTI OTETAAN KÄYTTÖÖN?
 
-1. Lataa skripti omalle koneellesi
+1. Lataa tiedosto "Tauonmuistuttaja.ps1" githubista.
 2. Tarkista, onko skriptien ajo sallittua windows-ympäristössä jota käytät, sen voi tarkistaa Powershellissä komennolla "Set-ExecutionPolicy RemoteSigned"
-3. Scriptin voi suorittaa manuaalisesti, jos sitä haluaa testata ensin. Skripti myöhemmin toimii automaattisesti.
+3. Testaa skriptin toimivuus ajamalla se manuaalisesti Powershellissä.
 
-Ominaisuudet:
+OMINAISUUDET:
 
--Powershell ikkunan piilotus, koodissa on funktio, joka piilottaa powershellin ponnahdusikkunan muutaman sekunnin jälkeen.
--Skripti pyytää tarvittaessa järjestyksenvalvojan oikeuksia.
+-Powershell ikkunan piilotus, koodissa on seuraava funktio:
+
+Add-Type -Name Window -Namespace Console -MemberDefinition '
+[DllImport("Kernel32.dll")]
+public static extern IntPtr GetConsoleWindow(); //tämä tarkistaa konsoli-ikkunan tilan, eli onko ikkuna avoinna ja skripti pyörimässä.
+
+[DllImport("user32.dll")]
+public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
+'
+
+$console = [Console.Window]::GetConsoleWindow()
+
+# 0 hide
+[Console.Window]::ShowWindow($console, 0) | Out-Null //Tämä vastaa konsoli-ikkunan piilotuksesta, eli luku 0 piilottaa ikkunan näkyvistä.
+
+-Skripti pyytää tarvittaessa järjestyksenvalvojan oikeuksia, jotta sen pystyy suorittamaan.
 -Toimii vain arkisin silloin kun käyttäjä on kirjautuneena, jos on viikonloppu skriptiä ei suoriteta.
 -LockWorkStation funktio lukitsee tietokoneen.
 
-Mukautus:
+MUKAUTUS:
 
 -Ponnahdusikkunoiden näkyvyyttä voi muuttaa, esimerkiksi 10 sekunnista 30 sekuntiin.
 -Varoitusaikaa voi muuttaa säätämällä $warnTime ja $msgTimeout muuttujia.
 -Lukituksen ajoitusta pystyy muuttamaan säätämällä $maxTime muuttujaa.
 -Jos tietokoneessa on mahdollisuus lepotilaan, voi koodiin lisätä "Start-Sleep" ominaisuuden, joka laittaa tietokoneen lepotilaan tietyn ajan kuluttua, kun sille annetaan sekuntit, esimerkiksi "Start-Sleep -Seconds 10".
 
-Muuta huomioitavaa:
+MUUTA HUOMIOITAVAA:
 
 Skripti kannattaa testata huolellisesti, ennen kuin sen ottaa käyttöön. Skriptissä ei käytetä kolmannen osapuolen työkaluja, eli skripti käyttää pelkästään Windowsista löytyviä resursseja. 
 Skriptiä on testattu kahdella eri Windows lisenssillä, "Home" versiolla sekä "Pro" versiolla. Skripti toimii molemmilla Windows lisensseillä olevilla tietokoneilla. Versiot jossa skripti on testattu ovat Windows 10 PRO ja Windows 11 Home, eli skripti toimii sekä vanhemmassa että uudemmassa Windowsissa suoraan, ilman että tarvitsee tehdä muokkauksia Powershellissä.
 Testattu toimintaa, jossa tietokone laitettaisiin lepotilaan sen jälkeen kun käyttäjä kirjataan ulos. Tämä ominaisuus ei kuitenkaan toiminut tietokoneessa jossa oli Windows 10, koska tietokone on liian vanha tukemaan lepotilaa. Asetus toimi uudemmassa tietokoneessa jossa oli Windows 11.
 
-Mitä voisi kehittää:
+KEHITETTÄVÄÄ:
 
--Koodiin voisi tehdä lisäyksen jolla Powershell ikkunat voisi laittaa kokonaan piiloon, sillä kun ponnahdusikkunat käynnistyy, avautuu powershellin ikkuna muutaman sekunnin ajaksi, kun skripti käynnistää ponnahdusikkunoita. 
 -Voisi liätä ajastintoiminnon, joka näyttää jäljellä olevan ajan ennen kuin käyttäjä kirjataan ulos automaattisesti.
-
-
+-Powershell ikkunoiden piilotustoimintaa voisi säätää jotta ne olisi kokonaan piilossa heti kun skripti käynnistyy, koska ne näkyy muutaman sekunnin ajan kun skripti käynnistää ponnahdusikkunoita.
+-Skriptin ajoa varten voisi olla ns "pysyvät" järjestyksenvalvojan oikeudet, eli käyttäjältä ei kysyttäisi lupaa skriptin ajoon, tämän voisi totetuttaa esimerkiksi siten, että tiedoston muuttaa .XML muotoon, ja ajastaa sen Tehtävien ajoituksella, sekä antaa tarvittavat oikeudet.
 
 
 
