@@ -28,7 +28,6 @@ public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
 
 $console = [Console.Window]::GetConsoleWindow()
 
-# 0 hide
 [Console.Window]::ShowWindow($console, 0) | Out-Null //Tämä vastaa konsoli-ikkunan piilotuksesta, eli luku 0 piilottaa ikkunan näkyvistä.
 
 -Skripti pyytää tarvittaessa järjestyksenvalvojan oikeuksia, jotta sen pystyy suorittamaan.
